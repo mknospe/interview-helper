@@ -1,0 +1,71 @@
+@import "~bootstrap/scss/functions";
+@import "theme"; // CUSTOM THEME
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/root";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+@import "~bootstrap/scss/images";
+// @import "~bootstrap/scss/code";
+@import "~bootstrap/scss/grid";
+// @import "~bootstrap/scss/tables";
+@import "~bootstrap/scss/forms";
+@import "~bootstrap/scss/buttons";
+// @import "~bootstrap/scss/transitions";
+// @import "~bootstrap/scss/dropdown";
+// @import "~bootstrap/scss/button-group";
+// @import "~bootstrap/scss/input-group";
+// @import "~bootstrap/scss/custom-forms";
+// @import "~bootstrap/scss/nav";
+// @import "~bootstrap/scss/navbar";
+@import "~bootstrap/scss/card";
+// @import "~bootstrap/scss/breadcrumb";
+// @import "~bootstrap/scss/pagination";
+// @import "~bootstrap/scss/badge";
+// @import "~bootstrap/scss/jumbotron";
+// @import "~bootstrap/scss/alert";
+// @import "~bootstrap/scss/progress";
+// @import "~bootstrap/scss/media";
+// @import "~bootstrap/scss/list-group";
+// @import "~bootstrap/scss/close";
+// @import "~bootstrap/scss/toasts";
+// @import "~bootstrap/scss/modal";
+// @import "~bootstrap/scss/tooltip";
+// @import "~bootstrap/scss/popover";
+// @import "~bootstrap/scss/carousel";
+@import "~bootstrap/scss/spinners";
+@import "~bootstrap/scss/utilities";
+// @import "~bootstrap/scss/print";
+
+
+body {
+	background-color: $gray-100;
+	color: $body-color;
+}
+
+header {
+	background-color: $blue;
+	color: $white;
+	padding: spacing(1.5, 1);
+	margin-bottom: spacing(2);
+	& .headline {
+		margin: spacing(0, 0, 0, 1);
+	}
+}
+
+.main {
+	margin-bottom: spacing(2);
+	min-height: 400px;
+
+	&--fullsize {
+		min-height: calc(100vh - 118px);
+	}
+}
+
+footer {
+	padding-bottom: spacing(2);
+}
+
+p {
+	margin-bottom: spacing(1);
+	white-space: pre-line;
+}
