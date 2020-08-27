@@ -1,9 +1,7 @@
 import React from 'react';
 import {navigate} from '@reach/router';
-import PropTypes from 'prop-types';
 import {useSession} from 'contexts/SessionContext';
 import Header from 'components/Header';
-import Main from 'components/Main';
 import Footer from 'components/Footer';
 
 const Summary = props => {
@@ -25,10 +23,6 @@ const Summary = props => {
 			/>
 		</React.Fragment>
 	);
-};
-
-Summary.propTypes = {
-	
 };
 
 export default Summary;

@@ -9,35 +9,48 @@ const Question = (props) => {
 		categoryId,
 		label,
 		question,
-		addQuestion,
-		removeQuestion,
-		changeQuestion,
+		onAdd,
+		onChange,
+		onDelete,
 	} = props;
 
-	function handleChange(e) {
-		changeQuestion(categoryId, id, e.target.value);
+	function handleAdd() {
+		onAdd(categoryId, id);
 	}
 
-	function handleAdd() {
-		addQuestion(categoryId, id);
+	function handleChange(e) {
+		onChange(id, e.target.value);
 	}
 
 	function handleRemove() {
-		removeQuestion(categoryId, id);
+		onDelete(categoryId, id);
 	}
 
 	return (
+		<div className="row mb-3">
+			<div className="col-sm-10">
+				<InputField
+					className="form-control"
+					label={label}
+					value={question}
+					onChange={handleChange}
+					placeholder="What do you want to ask?"
+					maxLength={500}
+				/>
+			</div>
+			<div className="col-sm-2 d-flex align-items-end">
+				<div className="btn-group btn-block">
+					<Button className="btn btn-outline-secondary" onClick={handleAdd}>+</Button>
+					<Button className="btn btn-outline-secondary" onClick={handleRemove}>-</Button>
+				</div>
+			</div>
+		</div>
+	);
+
+	return (
 		<div>
-			<InputField
-				className="form-control"
-				label={label}
-				value={question}
-				onChange={handleChange}
-				placeholder="What do you want to ask?"
-				maxLength={500}
-			/>
-			<Button onClick={handleAdd}>+</Button>
-			<Button onClick={handleRemove}>-</Button>
+
+
 		</div>
 	);
 };
@@ -47,9 +60,9 @@ Question.propTypes = {
 	categoryId: PropTypes.string.isRequired,
 	label: PropTypes.string.isRequired,
 	question: PropTypes.string.isRequired,
-	addQuestion: PropTypes.func.isRequired,
-	removeQuestion: PropTypes.func.isRequired,
-	changeQuestion: PropTypes.func.isRequired,
+	onAdd: PropTypes.func.isRequired,
+	onChange: PropTypes.func.isRequired,
+	onDelete: PropTypes.func.isRequired,
 };
 
 export default Question;

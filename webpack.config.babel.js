@@ -52,7 +52,7 @@ export default (environment, argv) => {
 			open: false,
 			historyApiFallback: true,
 			contentBase: path.join(__dirname, 'public'),
-			port: 3000
+			port: 3030
 		},
 		resolve: {
 			modules: ['node_modules', './src'],

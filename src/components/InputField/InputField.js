@@ -19,7 +19,7 @@ const InputField = props => {
 
 	return (
 		<React.Fragment>
-			<label htmlFor={id}>{label}</label>
+			{label && <label htmlFor={id}>{label}</label>}
 			<input
 				id={id}
 				className={className}
@@ -45,7 +45,7 @@ InputField.propTypes = {
 	disabled: PropTypes.bool,
 	error: PropTypes.string,
 	id: PropTypes.string,
-	label: PropTypes.string.isRequired,
+	label: PropTypes.string,
 	maxLength: PropTypes.number,
 	name: PropTypes.string,
 	onChange: PropTypes.func.isRequired,

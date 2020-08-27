@@ -12,10 +12,10 @@
 @import "~bootstrap/scss/buttons";
 // @import "~bootstrap/scss/transitions";
 // @import "~bootstrap/scss/dropdown";
-// @import "~bootstrap/scss/button-group";
+@import "~bootstrap/scss/button-group";
 // @import "~bootstrap/scss/input-group";
 // @import "~bootstrap/scss/custom-forms";
-// @import "~bootstrap/scss/nav";
+@import "~bootstrap/scss/nav";
 // @import "~bootstrap/scss/navbar";
 @import "~bootstrap/scss/card";
 // @import "~bootstrap/scss/breadcrumb";
@@ -68,4 +68,9 @@ footer {
 p {
 	margin-bottom: spacing(1);
 	white-space: pre-line;
+}
+
+.tab-content {
+	background-color: $white;
+	padding: spacing(2);
 }

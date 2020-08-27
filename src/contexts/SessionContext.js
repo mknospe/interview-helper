@@ -1,33 +1,93 @@
 import React from 'react';
-import {
-	getQuestionsByCategory,
-	getNextCategory, getCategoryIndex,
-} from 'lib/utils';
+import {getNextCategory} from 'lib/utils';
 
 const SessionContext = React.createContext();
 const actions = {
+	ADD_CATEGORY: 'ADD_CATEGORY',
+	CHANGE_CATEGORY: 'CHANGE_CATEGORY',
+	REMOVE_CATEGORY: 'REMOVE_CATEGORY',
 	ADD_QUESTION: 'ADD_QUESTION',
 	CHANGE_QUESTION: 'CHANGE_QUESTION',
 	REMOVE_QUESTION: 'REMOVE_QUESTION',
 	SET_NEXT_QUESTION: 'SET_NEXT_QUESTION',
+	SET_CURRENT_CATEGORY_ID: 'SET_CURRENT_CATEGORY_ID',
 	RESTART: 'RESTART',
 };
 
-function changeQuestion(state, payload) {
-	const {categoryId, questionId, value} = payload;
-
-	const updatedQuestion = {
-		...state.questions[questionId],
-		text: value,
+function updateCurrentCategoryId(state) {
+	return {
+		...state,
+		current: {
+			...state.current,
+			categoryId: state.categoryOrder[0] || '',
+		}
 	}
+}
+
+function addCategory(state, payload) {
+	const categoryId = `c${state.idCounter}`;
+	const newCategory = {
+		id: categoryId,
+		name: 'Untitled',
+		questionOrder: [],
+	};
+
+	return updateCurrentCategoryId({
+		...state,
+		categories: {
+			...state.categories,
+			[categoryId]: newCategory
+		},
+		categoryOrder: [
+			...state.categoryOrder,
+			categoryId,
+		],
+		idCounter: state.idCounter + 1,
+	});
+}
+
+function changeCategory(state, payload) {
+	const {categoryId, value} = payload;
+
+	const updatedCategory = {
+		...state.categories[categoryId],
+		name: value,
+	};
 
 	return {
 		...state,
-		questions: {
-			...state.questions,
-			[questionId]: updatedQuestion,
+		categories: {
+			...state.categories,
+			[categoryId]: updatedCategory,
 		}
 	};
+}
+
+function removeCategory(state, payload) {
+	const {categoryId} = payload;
+	const categoryOrder = state.categoryOrder.concat([]);
+	const questionOrder = state.categories[categoryId].questionOrder.concat([]);
+	const index = categoryOrder.indexOf(categoryId);
+	categoryOrder.splice(index , 1);
+
+	const updatedCategories = {
+		...state.categories,
+	};
+	delete updatedCategories[categoryId];
+
+	const updatedQuestions = {
+		...state.questions,
+	};
+	questionOrder.forEach(questionId => {
+		delete updatedQuestions[questionId];
+	});
+
+	return updateCurrentCategoryId({
+		...state,
+		categories: updatedCategories,
+		categoryOrder,
+		questions: updatedQuestions,
+	});
 }
 
 function addQuestion(state, payload) {
@@ -59,6 +119,23 @@ function addQuestion(state, payload) {
 			[newQuestion.id]: newQuestion,
 		},
 		idCounter: state.idCounter + 1,
+	};
+}
+
+function changeQuestion(state, payload) {
+	const {questionId, value} = payload;
+
+	const updatedQuestion = {
+		...state.questions[questionId],
+		text: value,
+	};
+
+	return {
+		...state,
+		questions: {
+			...state.questions,
+			[questionId]: updatedQuestion,
+		}
 	};
 }
 
@@ -122,6 +199,18 @@ function setNextQuestion(state, payload) {
 	};
 }
 
+function setCurrentCategoryId(state, payload) {
+	const {categoryId} = payload;
+
+	return {
+		...state,
+		current: {
+			...state.current,
+			categoryId,
+		}
+	}
+}
+
 function restart(state, payload) {
 	return {
 		...state,
@@ -138,6 +227,15 @@ function sessionReducer(state, action) {
 	const {type, payload} = action;
 
 	switch (type) {
+		case actions.ADD_CATEGORY:
+			return addCategory(state, payload);
+
+		case actions.CHANGE_CATEGORY:
+			return changeCategory(state, payload);
+
+		case actions.REMOVE_CATEGORY:
+			return removeCategory(state, payload);
+
 		case actions.ADD_QUESTION:
 			return addQuestion(state, payload);
 
@@ -149,6 +247,9 @@ function sessionReducer(state, action) {
 
 		case actions.SET_NEXT_QUESTION:
 			return setNextQuestion(state, payload);
+
+		case actions.SET_CURRENT_CATEGORY_ID:
+			return setCurrentCategoryId(state, payload);
 
 		case actions.RESTART:
 			return restart(state, payload);
@@ -231,12 +332,23 @@ function useSession() {
 	}
 
 	const [state, dispatch] = context;
-	const changeQuestion = (categoryId, questionId, value) => dispatch({
-		type: actions.CHANGE_QUESTION,
+	const addCategory = (name) => dispatch({
+		type: actions.ADD_CATEGORY,
+		payload: {
+			name,
+		}
+	});
+	const changeCategory = (categoryId, value) => dispatch({
+		type: actions.CHANGE_CATEGORY,
 		payload: {
 			categoryId,
-			questionId,
 			value,
+		}
+	});
+	const removeCategory = (categoryId) => dispatch({
+		type: actions.REMOVE_CATEGORY,
+		payload: {
+			categoryId,
 		}
 	});
 	const addQuestion = (categoryId, questionId) => dispatch({
@@ -244,6 +356,13 @@ function useSession() {
 		payload: {
 			categoryId,
 			questionId,
+		}
+	});
+	const changeQuestion = (questionId, value) => dispatch({
+		type: actions.CHANGE_QUESTION,
+		payload: {
+			questionId,
+			value,
 		}
 	});
 	const removeQuestion = (categoryId, questionId) => dispatch({
@@ -261,6 +380,12 @@ function useSession() {
 			duration,
 		}
 	});
+	const setCurrentCategoryId = (categoryId) => dispatch({
+		type: actions.SET_CURRENT_CATEGORY_ID,
+		payload: {
+			categoryId,
+		}
+	});
 	const restart = () => dispatch({
 		type: actions.RESTART,
 		payload: {}
@@ -268,10 +393,14 @@ function useSession() {
 
 	return {
 		session: state,
+		addCategory,
+		changeCategory,
+		removeCategory,
 		addQuestion,
 		changeQuestion,
 		removeQuestion,
 		setNextQuestion,
+		setCurrentCategoryId,
 		restart,
 	};
 }
