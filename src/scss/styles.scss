@@ -74,3 +74,21 @@ p {
 	background-color: $white;
 	padding: spacing(2);
 }
+
+.rating {
+	direction: rtl;
+
+	&__star {
+		cursor: pointer;
+		font-family: "Segoe WP","Segoe UI", Helvetica, Arial, sans-serif;
+		font-size: 40px;
+		transition: color 200ms;
+		&:hover,
+		&:hover ~ span {
+			color: #fbc02d;
+		}
+	}
+	&--active {
+		color: #fbc02d;
+	}
+}

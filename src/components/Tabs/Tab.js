@@ -7,13 +7,15 @@ const Tab = ({label, id = '', isActive = false, onClick}) => {
 		active: isActive
 	});
 
+	function handleClick(e) {
+		onClick(e, id);
+	}
+
 	return (
 		<li className="nav-item">
 			<a
 				className={cx}
-				onClick={(e) => {
-					onClick(e, id);
-				}}>
+				onClick={handleClick}>
 				{label}
 			</a>
 		</li>

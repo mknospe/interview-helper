@@ -1,56 +1,69 @@
 import React from 'react';
+import {DragDropContext} from 'react-beautiful-dnd';
 import {useSession} from 'contexts/SessionContext';
-import {Tab, TabContent} from 'components/Tabs';
-import Question from './Question';
+import {TabContent} from 'components/Tabs';
 import Category from './Category';
+import CategoryTabList from './CategoryTabList';
+import QuestionList from './QuestionList';
 
-const MAX_CATEGORIES = 10;
+const MAX_CATEGORIES = 8;
 
 const QuestionForm = () => {
 	const {
 		session,
 		addCategory,
 		changeCategory,
+		reorderCategory,
 		removeCategory,
+		setCurrentCategoryId,
 		addQuestion,
 		changeQuestion,
+		reorderQuestion,
 		removeQuestion,
-		setCurrentCategoryId,
 	} = useSession();
 
-	const handleAddCategory = () => {
-		addCategory();
-	};
+	function onDragEnd(result) {
+		const {
+			source,
+			destination,
+			draggableId,
+			type,
+		} = result;
 
-	const handleSelectCategory = (e, categoryId) => {
-		setCurrentCategoryId(categoryId);
-	};
+		if (!destination) {
+			return;
+		}
+
+		if (destination.droppableId === source.droppableId && destination.index === source.index) {
+			return;
+		}
+
+		switch (type) {
+			case 'category':
+				reorderCategory(draggableId, source.index, destination.index);
+				break;
+
+			case 'question':
+				reorderQuestion(draggableId, source.index, destination.index);
+				break;
+
+			default:
+				throw new Error(`Unsupported draggable type ${type}.`);
+		}
+	}
 
 	const activeCategory = session.categories[session.current.categoryId];
-	const canAddCategories = session.categoryOrder.length < MAX_CATEGORIES;
 
 	return (
-		<React.Fragment>
-			<nav>
-				<ul className="nav nav-tabs">
-					{canAddCategories && <Tab label="+" onClick={handleAddCategory}/>}
-
-					{session.categoryOrder.map((categoryId) => {
-						const {name, questionOrder} = session.categories[categoryId];
-						const label = `${name} (${questionOrder.length})`;
-
-						return (
-							<Tab
-								key={categoryId}
-								id={categoryId}
-								label={label}
-								isActive={session.current.categoryId === categoryId}
-								onClick={handleSelectCategory}
-							/>
-						);
-					})}
-				</ul>
-			</nav>
+		<DragDropContext onDragEnd={onDragEnd}>
+			<CategoryTabList
+				categories={session.categories}
+				categoryOrder={session.categoryOrder}
+				activeCategory={activeCategory}
+				categoryLimit={MAX_CATEGORIES}
+				onAdd={addCategory}
+				onSelect={setCurrentCategoryId}
+			/>
 
 			{activeCategory &&
 				<TabContent>
@@ -60,27 +73,20 @@ const QuestionForm = () => {
 						onChange={changeCategory}
 						onDelete={removeCategory}
 					/>
-					<br/>
-					<h3>Questions</h3>
-					{activeCategory.questionOrder.map((questionId, index) => {
-						const {text} = session.questions[questionId];
 
-						return (
-							<Question
-								key={questionId}
-								id={questionId}
-								categoryId={session.current.categoryId}
-								question={text}
-								label={`Question #${index + 1}`}
-								onAdd={addQuestion}
-								onChange={changeQuestion}
-								onDelete={removeQuestion}
-							/>
-						);
-					})}
+					<br/>
+
+					<h3>Questions</h3>
+					<QuestionList
+						category={activeCategory}
+						questions={session.questions}
+						onAdd={addQuestion}
+						onChange={changeQuestion}
+						onDelete={removeQuestion}
+					/>
 				</TabContent>
 			}
-		</React.Fragment>
+		</DragDropContext>
 	);
 };
 

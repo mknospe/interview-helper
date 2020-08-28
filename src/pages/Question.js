@@ -4,24 +4,19 @@ import {useSession} from 'contexts/SessionContext';
 import {now} from 'lib/utils';
 import Header from 'components/Header';
 import Main from 'components/Main';
+import QuestionNotes from 'components/QuestionNotes';
+import QuestionRating from 'components/QuestionRating';
 import Footer from 'components/Footer';
 
 const Question = () => {
-	const {session, restart, setNextQuestion} = useSession();
-	const [time, setTime] = React.useState(null);
 	const {
-		current: {
-			index,
-			categoryId
-		},
-		categories,
-		questions
-	} = session;
-	const {name: categoryName, questionOrder} = categories[categoryId];
-	const totalNum = questionOrder.length;
-	const questionId = questionOrder[index];
-	const question = questions[questionId].text;
-	const currentNum = index + 1;
+		session,
+		restart,
+		changeQuestionNote,
+		changeQuestionRating,
+		setNextQuestion
+	} = useSession();
+	const [time, setTime] = React.useState(null);
 
 	React.useEffect(() => {
 		if (session.isCompleted) {
@@ -31,6 +26,14 @@ const Question = () => {
 
 		setTime(now());
 	}, [session]);
+
+	const {index,	categoryId} = session.current;
+	const activeCategory = session.categories[categoryId];
+	const totalNum = activeCategory.questionOrder.length;
+	const questionId = activeCategory.questionOrder[index];
+	const question = session.questions[questionId];
+	const currentNum = index + 1;
+	const title = `${activeCategory.name} (${currentNum} of ${totalNum})`;
 
 	function handleBack() {
 		restart();
@@ -44,10 +47,20 @@ const Question = () => {
 
 	return (
 		<React.Fragment>
-			<Header title={`${categoryName} (${currentNum} of ${totalNum})`}/>
+			<Header title={title}/>
 
 			<Main className="container">
-				<h1>{question}</h1>
+				<h1>{question.text}</h1>
+
+				<QuestionNotes
+					question={question}
+					onChange={changeQuestionNote}
+				/>
+
+				<QuestionRating
+					question={question}
+					onClick={changeQuestionRating}
+				/>
 			</Main>
 
 			<Footer

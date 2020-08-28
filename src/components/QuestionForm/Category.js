@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import InputField from '../InputField';
-import Button from '../Button';
+import InputField from 'components/InputField';
+import Button from 'components/Button';
 
 const Category = ({category, onChange, onDelete}) => {
 	function handleChange(e) {

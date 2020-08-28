@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.4.1",
-    "dotenv-webpack": "^1.7.0"
+    "dotenv-webpack": "^1.7.0",
+    "react-beautiful-dnd": "^13.0.0"
   }
 }
